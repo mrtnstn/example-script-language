@@ -1,0 +1,52 @@
+grammar nl.mrtnstn.xtext.Script with org.eclipse.xtext.common.Terminals
+
+generate script "http://www.mrtnstn.nl/xtext/Script"
+
+Script:
+	elements+=ScriptElement*
+;
+
+ScriptElement:
+	Function | Variable | FeatureCall
+;
+
+Function:
+	'function' name=ID '(' (parameters+=Parameter (',' parameters+=Parameter)*)? ')'
+	body=Block 
+;
+
+Block:
+	{Block}
+	'{'
+		elements+=ScriptElement*
+	'}'
+;
+
+Parameter:
+	name=ID
+;
+
+Variable:
+	'var' name=ID
+;
+
+NamedElement:
+	Function | Variable | Parameter
+;
+
+FeatureCall:
+	feature=[NamedElement] (function?='(' Arguments? ')')?
+;
+
+fragment Arguments:
+	arguments+=Expression (',' arguments+=Expression)*
+;
+
+Expression:
+		FeatureCall
+	|	Literal
+;
+
+Literal:
+	value=INT
+;
